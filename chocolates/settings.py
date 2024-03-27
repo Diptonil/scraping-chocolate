@@ -7,10 +7,10 @@
 #     https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
 #     https://docs.scrapy.org/en/latest/topics/spider-middleware.html
 
-BOT_NAME = "p4_chocolatescraper"
+BOT_NAME = "chocolates"
 
-SPIDER_MODULES = ["p4_chocolatescraper.spiders"]
-NEWSPIDER_MODULE = "p4_chocolatescraper.spiders"
+SPIDER_MODULES = ["chocolates.spiders"]
+NEWSPIDER_MODULE = "chocolates.spiders"
 
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
@@ -61,9 +61,8 @@ ROBOTSTXT_OBEY = True
 #}
 
 ITEM_PIPELINES = {
-    "p4_chocolatescraper.pipelines.PriceConversionPipeline": 200,
-    "p4_chocolatescraper.pipelines.DuplicatePipeline": 300,
-    "p4_chocolatescraper.pipelines.JSONPrettifyPipeline": 400,
+    "chocolates.pipelines.PriceConversionPipeline": 200,
+    "chocolates.pipelines.DuplicatePipeline": 300,
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)

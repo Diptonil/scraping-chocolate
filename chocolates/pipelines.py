@@ -1,7 +1,10 @@
 import json
+import sqlite3
 
+from decouple import config
 from scrapy.exceptions import DropItem
 from itemadapter import ItemAdapter
+from psycopg2 import connect
 
 
 class P4ChocolatescraperPipeline:
@@ -41,11 +44,67 @@ class JSONPrettifyPipeline:
         self.file = open('output.json', 'w')
         self.file.write("[\n")
 
+    def process_item(self, item, spider):
+        line = json.dumps(dict(item), indent=4) + ",\n"
+        self.file.write(line)
+        return item
+
     def close_spider(self, spider):
         self.file.write("\n]")
         self.file.close()
 
+
+class PostgresPipeline:
+    def open_spider(self, spider):
+        self.conn = connect(
+            dbname='chocolate_db',
+            user=config("POSTGRES_USER"),
+            password=config("POSTGRES_PASSWORD"),
+            host='localhost',
+            port='5432'
+        )
+        self.cur = self.conn.cursor()
+
+    def close_spider(self, spider):
+        self.conn.commit()
+        self.cur.close()
+        self.conn.close()
+
     def process_item(self, item, spider):
-        line = json.dumps(dict(item), indent=4) + ",\n"
-        self.file.write(line)
+        self.cur.execute(
+            "INSERT INTO chocolates (name, price, url) VALUES (%s, %s, %s)",
+            (
+                item['name'],
+                item['price'],
+                item["url"]
+            )
+        )
+        return item
+
+
+class SQLitePipeline:
+    def open_spider(self, spider):
+        self.conn = sqlite3.connect('data.db')
+        self.cur = self.conn.cursor()
+        self.create_table()
+
+    def close_spider(self, spider):
+        self.conn.commit()
+        self.cur.close()
+        self.conn.close()
+
+    def create_table(self):
+        self.cur.execute(
+            '''
+            CREATE TABLE IF NOT EXISTS chocolates (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name TEXT,
+                price FLOAT,
+                url TEXT,
+            )
+            '''
+        )
+
+    def process_item(self, item, spider):
+        self.cur.execute("INSERT INTO chocolates (name, price, url) VALUES (?, ?, ?)", (item['name'], item['price'], item["url"]))
         return item
