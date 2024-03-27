@@ -8,6 +8,10 @@ class ChocolateSpider(scrapy.Spider):
     allowed_domains = ["chocolate.co.uk"]
     start_urls = ["https://www.chocolate.co.uk/collections/all"]
 
+    # def start_requests(self):
+    #     """Enable this only in case we are using proxies."""
+    #     yield scrapy.Request(url=get_proxy_url(self.start_urls[0]), callback=self.parse)
+
     def parse(self, response):
         products = response.css("product-item")
         for product in products:
@@ -19,4 +23,5 @@ class ChocolateSpider(scrapy.Spider):
         
         next_page = response.css('[rel="next"]::attr(href)').get()
         if next_page is not None:
+            # yield response.follow(get_proxy_url("https://www.chocolate.co.uk" + next_page), callback=self.parse)
             yield response.follow("https://www.chocolate.co.uk" + next_page, callback=self.parse)
