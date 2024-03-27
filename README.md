@@ -4,7 +4,7 @@
     <img src="https://img.shields.io/badge/Python-FFD43B?style=for-the-badge&logo=python&logoColor=blue" />
 </span>
 
-- This is a general web scraping solution for a website with special focus on techniques to bypass 403s.
+- This is a general web scraping solution for a website with special focus on the most basic techniques to bypass 403s.
 - There are also pipelines (disabled by default) to push data to databases, format outputs, transform data based on currency rate, etc.
 - Item loaders to validate scraped data to bring it all to a uniformity has also been implemented.
 
